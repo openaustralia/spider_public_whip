@@ -5,6 +5,8 @@ require 'active_record'
 require 'sqlite3'
 require 'csv'
 
+PHP_SERVER = 'http://dev.publicwhip.org.au/'
+
 def get_page_links(agent, url)
   base = URI.parse(url)
   # Ignore links with nil urls
@@ -68,7 +70,7 @@ else
   # Create the tables we need
   CreateLinks.up
   # And put the first url in it
-  Link.create!(url: "http://localhost:8080", spider: true, done: false)
+  Link.create!(url: PHP_SERVER, spider: true, done: false)
 end
 
 agent = Mechanize.new
@@ -91,7 +93,7 @@ while !Link.where(spider: true, done: false).empty?
       new_urls.each do |url|
         # So let's spider this one (unless we're already doing it)
         if Link.find_by(url: url).nil?
-          Link.create(url: url, source_url: link.url, spider: (URI.parse(url).host == "localhost"))
+          Link.create(url: url, source_url: link.url, spider: (URI.parse(url).host == URI.parse(PHP_SERVER).host))
         end
       end
       link.update_attributes(done: true)
