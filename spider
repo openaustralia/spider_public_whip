@@ -4,8 +4,9 @@ require 'mechanize'
 require 'active_record'
 require 'sqlite3'
 require 'csv'
+require 'yaml'
 
-PHP_SERVER = 'http://dev.publicwhip.org.au/'
+PHP_SERVER = YAML.load(File.open('configuration.yml'))['php_server']
 
 def get_page_links(agent, url)
   base = URI.parse(url)

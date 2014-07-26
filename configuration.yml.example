@@ -1,0 +1,2 @@
+php_server: http://dev.publicwhip.org.au
+rails_server: http://localhost:3000

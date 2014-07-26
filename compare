@@ -5,6 +5,7 @@
 require 'csv'
 require 'active_record'
 require 'sqlite3'
+require 'yaml'
 
 def read_paths_from_file
   urls = []
@@ -99,8 +100,9 @@ paths_to_skip = ["/account/addpolicy.php", "/account/lostpass.php", "/account/re
 # this. So probably best wait until the end and solve them all at once.
 paths_to_skip += [/Barnaby_Joyce/]
 
-host1 = "localhost:8080"
-host2 = "localhost:3000"
+configuration = YAML.load(File.open('configuration.yml'))
+host1 = configuration['php_server']
+host2 = configuration['rails_server']
 
 # Remove certain paths
 paths = read_paths_from_file
@@ -121,8 +123,8 @@ count = paths.count
 paths.each do |path|
   count -= 1
   puts "Checking #{path} (#{count} left)..."
-  text1 = Net::HTTP.get(URI.parse("http://#{host1}#{path}"))
-  text2 = Net::HTTP.get(URI.parse("http://#{host2}#{path}"))
+  text1 = Net::HTTP.get(URI.parse("#{host1}#{path}"))
+  text2 = Net::HTTP.get(URI.parse("#{host2}#{path}"))
   text1.force_encoding(Encoding::UTF_8)
   text2.force_encoding(Encoding::UTF_8)
   n1 = normalise_html(text1)
